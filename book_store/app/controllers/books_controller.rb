@@ -1,4 +1,5 @@
 class BooksController < ApplicationController
+
   def index
     render json: Book.all
   end
@@ -11,6 +12,12 @@ class BooksController < ApplicationController
     else
       render json: book.errors, status: :unprocessable_entity
     end
+  end
+
+  def destroy
+    Book.find(params[:id]).destroy!
+
+    head :no_content
   end
 
   private
