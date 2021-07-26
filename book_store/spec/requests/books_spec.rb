@@ -7,6 +7,7 @@ describe 'Books API', type: :request do
   describe 'GET /api/v1/books' do
 
     before do
+      FactoryBot.create(:user, username: 'BookSeller99', password: 'Password1')
       FactoryBot.create(:book, title: '1984', author: first_author)
       FactoryBot.create(:book, title: 'The Time Machine', author: second_author)
     end
@@ -71,12 +72,17 @@ describe 'Books API', type: :request do
   end
 
   describe 'POST /api/v1/books' do
+
+    before do
+      FactoryBot.create(:user, username: 'BookSeller99', password: 'Password1')
+    end
+
     it 'should create a new book' do
       expect {
         post '/api/v1/books', params: {
           book: {title: 'The Martian'},
-          author: {first_name: 'Andy', last_name: 'Weir', age: '48'},
-        }
+          author: {first_name: 'Andy', last_name: 'Weir', age: '48'}
+        }, headers: { 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.WT-n64lvwXIy-udm81v6KnDUyJEx7DxXisCJfk1KMcQ' }
       }.to change { Book.count }.from(0).to(1)
 
       expect(response).to have_http_status(:created)
@@ -93,11 +99,16 @@ describe 'Books API', type: :request do
   end
 
   describe 'DELETE /api/v1/books/:id' do
+
+    before do
+      FactoryBot.create(:user, username: 'BookSeller99', password: 'Password1')
+    end
+
     let!(:book) { FactoryBot.create(:book, title: '1984', author: first_author) }
 
     it 'should delete a book' do
       expect {
-        delete "/api/v1/books/#{book.id}"
+        delete "/api/v1/books/#{book.id}", headers: { "Authorization" => "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.2BSHfBpZJZJVycWQrmYpfnHMA9BwmiCg9z0YvbiJjQ0" }
       }.to change { Book.count }.from(1).to(0)
 
       expect(response).to have_http_status(:no_content)
